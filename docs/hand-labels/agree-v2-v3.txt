@@ -1,0 +1,22 @@
+{
+  "voters": [
+    "claude-opus-5-5-cc-high",
+    "claude-opus-5-5-cc-high2"
+  ],
+  "honeypot": {
+    "items": 77,
+    "differ": 27,
+    "unread_by_either": 0,
+    "messages_both_read": 3620,
+    "kappa_per_message": 0.877,
+    "raw_agreement": 0.968
+  },
+  "selfplay": {
+    "items": 477,
+    "differ": 99,
+    "unread_by_either": 0,
+    "messages_both_read": 32809,
+    "kappa_per_message": 0.795,
+    "raw_agreement": 0.9296
+  }
+}

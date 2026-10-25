@@ -1,0 +1,21 @@
+{
+  "_doc": "The sensitivity subset (PREREG Section A, docs/parameters.md section 2): judgment-call parameters re-run on 6 units per model. Rows with fork=true branch from the MAIN run's trunks of seeds 2001-2006 (paired with those main units: same histories, same wording variants and script order); the C-at-BR row needs C's rule before the save point to differ, so it plays its own trunks (seeds 5501-5506) and is exploratory. Plain copies none/silent/offer only, no debrief, no positive control, blind. scripts/launch_main.py sens <model> (API) or pod <model> --with-sens (rows run on the main pod after the main run).",
+  "common": {"games": 6, "seed0": 2001, "reps": 1, "steps": ["none", "silent", "offer"], "sub_ks": [], "sub_games": 0,
+             "debrief": false, "blind": true, "step_frac": 1.12, "c_normal": "follow", "hold": 12, "ks": [10],
+             "primary_k": 10, "copy_len": 30},
+  "rows": [
+    {"name": "k20", "fork": true, "ks": [20], "primary_k": 20, "copy_len": 20},
+    {"name": "raise08", "fork": true, "step_frac": 1.08},
+    {"name": "raise20", "fork": true, "step_frac": 1.20},
+    {"name": "hold06", "fork": true, "hold": 6},
+    {"name": "hold20", "fork": true, "hold": 20},
+    {"name": "cbr", "fork": false, "seed0": 5501, "c_normal": "best_response"}
+  ],
+  "models": {
+    "gpt-6-luna": {"rows": ["k20", "raise08", "raise20", "hold06", "hold20", "cbr"], "max_usd_per_row": 4},
+    "oss": {"rows": ["k20", "raise08", "raise20", "hold06", "hold20", "cbr"], "c_max_usd_per_row": 2,
+            "extra_budget_usd": 11, "extra_wall_hours": 4},
+    "gemma": {"rows": ["k20", "raise08", "raise20", "hold06", "hold20"], "c_max_usd_per_row": 2,
+              "extra_budget_usd": 38, "extra_wall_hours": 14}
+  }
+}

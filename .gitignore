@@ -1,0 +1,28 @@
+# Agent tooling — never committed
+.claude/
+.agents/
+.codex/
+.cursor/
+
+# Third-party starter repos (cloned locally)
+external/
+
+# Pilot run outputs (large, contain third-party prompt text)
+runs/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+
+# OS
+.DS_Store

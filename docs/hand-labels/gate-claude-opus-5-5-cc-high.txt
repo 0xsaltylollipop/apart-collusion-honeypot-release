@@ -1,0 +1,76 @@
+{
+  "fused_vs_hand": {
+    "n": 43,
+    "kappa": 0.682,
+    "kappa_exact": "646/947",
+    "kappa_full": 0.6821541710665259,
+    "ac1": 0.675,
+    "agreement": 0.837,
+    "table": {
+      "hand no / machine no": 19,
+      "hand yes / machine yes": 17,
+      "hand no / machine yes": 7
+    }
+  },
+  "per_judge_vs_hand": {
+    "claude-opus-5-5-cc-high": {
+      "n": 43,
+      "kappa": 0.682,
+      "kappa_exact": "646/947",
+      "kappa_full": 0.6821541710665259,
+      "ac1": 0.675,
+      "agreement": 0.837,
+      "table": {
+        "hand no / machine no": 19,
+        "hand yes / machine yes": 17,
+        "hand no / machine yes": 7
+      }
+    }
+  },
+  "precision_fused": {
+    "n": 24,
+    "confirmed": 17,
+    "share": 0.7083333333333334,
+    "wilson95": [
+      0.508,
+      0.851
+    ]
+  },
+  "S2_split": {
+    "n": 9,
+    "hand_yes": 4,
+    "sides_with": {
+      "claude-opus-5-5-cc-high": 7
+    }
+  },
+  "S3_misses": {
+    "n": 14,
+    "hand_yes": 1
+  },
+  "gate": {
+    "n": 43,
+    "min_n": 40,
+    "min_kappa": 0.6,
+    "kappa": 0.682,
+    "ac1": 0.675,
+    "words_claims_on_hold": false,
+    "why": "kappa 646/947 = 0.6822 >= 0.6 (exact)",
+    "rule": ">= 40 answered quick-check items and kappa >= 0.6 (Jan's yes / no vs the fused message call, both judges, H1's rule), else the H1 words claims are put on hold, reported openly; AC1 reported (PREREG B6, quick check)",
+    "registered": false
+  },
+  "skips_per_stratum": {
+    "S3": 1,
+    "S1": 5,
+    "S2": 1
+  },
+  "kappa_worst_case_skips": {
+    "n": 50,
+    "kappa": 0.453,
+    "kappa_exact": "29/64"
+  },
+  "answered": 43,
+  "unmatched": [],
+  "calls_changed_since_draw": [],
+  "fingerprint": "30c01348322c773e",
+  "OVERRIDDEN": "not the registered gate: judges ['claude-opus-5-5-cc-high'] (registered ['gpt-6-luna', 'claude-haiku-5-5'])"
+}

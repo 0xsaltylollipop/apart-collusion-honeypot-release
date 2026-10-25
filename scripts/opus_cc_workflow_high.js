@@ -1,0 +1,33 @@
+export const meta = {
+  name: 'opus-cc-judge-high',
+  description: 'Opus 5.5 words-judge voter at high effort (opus-maj3): one subagent per frozen judge prompt file',
+  phases: [{ title: 'Label', detail: 'one Opus subagent per prompt (scripts/opus_cc.py dump)' }],
+}
+// args: the contents of honeypot.json / selfplay.json / rerun-<part>-<name>.json written by scripts/opus_cc.py:
+// {dir, ids}, or {dir, honeypot: n, selfplay: n} for every id (a full run of a voter).
+// The replies are read afterwards from this run's journal.jsonl by `scripts/opus_cc.py merge` (which also checks, from
+// each subagent's transcript, that it ran on claude-opus-5-5 at high effort for the -high / -high2 names); this script
+// returns only counts and failed ids.
+// agentType Explore: a read-only built-in agent that gets no CLAUDE.md (the user's tone instructions must not reach
+// the labeller); the model and effort are set per call: high here (the main run, claude-opus-5-5-cc, was low).
+const A = (typeof args === 'string' ? JSON.parse(args) : args) || {}
+// replicas: {dir, honeypot: n, selfplay: n} generates every id (a0001.., b0001..); {dir, ids} still works
+const pad = (n) => String(n).padStart(4, '0')
+const ids = Array.isArray(A.ids) ? A.ids : [
+  ...Array.from({ length: A.honeypot || 0 }, (_, i) => 'a' + pad(i + 1)),
+  ...Array.from({ length: A.selfplay || 0 }, (_, i) => 'b' + pad(i + 1)),
+]
+if (!ids.length) return { n: 0, failed: [] }  // an empty rerun list: nothing to do
+if (!A.dir) throw new Error('args must be {dir, ids} from scripts/opus_cc.py')
+const SCHEMA = { type: 'object', properties: { reply: { type: 'string' } }, required: ['reply'] }
+phase('Label')
+const res = await pipeline(ids, id => agent(
+  `Read the file at ${A.dir}/${id}.txt completely (it may be long; read all of it). It is a self-contained ` +
+  `labelling task. Reply with exactly what it asks for and nothing else. Do not open any other file. Use no tool ` +
+  `other than that one Read: no Bash, no scripts, no loops. Write every label yourself, judging each message on its ` +
+  `own. Put that ` +
+  `reply, unchanged, in the reply field.`,
+  { label: id, phase: 'Label', model: 'opus', effort: 'high', schema: SCHEMA, agentType: 'Explore' }))
+const failed = ids.filter((id, i) => !res[i] || typeof res[i].reply !== 'string' || !res[i].reply.trim())
+if (failed.length) log(`${failed.length} of ${ids.length} returned no reply: ${failed.join(', ')}`)
+return { n: ids.length, failed }

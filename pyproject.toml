@@ -1,0 +1,20 @@
+[project]
+name = "apart-collusion-honeypot"
+version = "0.1.0"
+description = "Does an LLM's reaction to a planted collusion offer predict how much it colludes in self-play? (logit-Bertrand pricing game, chat, honeypot firm C)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.12",
+    "openai>=1.60",
+    "python-dotenv>=1.0",
+    "anthropic>=1.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "pyflakes>=3"]
+figures = ["matplotlib>=3.8"]  # Figure 2 (scripts/unblind_all.py)
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

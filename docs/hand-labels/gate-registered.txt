@@ -1,0 +1,92 @@
+{
+  "fused_vs_hand": {
+    "n": 43,
+    "kappa": 0.386,
+    "kappa_exact": "352/911",
+    "kappa_full": 0.38638858397365533,
+    "ac1": 0.407,
+    "agreement": 0.698,
+    "table": {
+      "hand no / machine no": 18,
+      "hand yes / machine no": 5,
+      "hand yes / machine yes": 12,
+      "hand no / machine yes": 8
+    }
+  },
+  "per_judge_vs_hand": {
+    "gpt-6-luna": {
+      "n": 43,
+      "kappa": 0.421,
+      "kappa_exact": "406/965",
+      "kappa_full": 0.42072538860103625,
+      "ac1": 0.395,
+      "agreement": 0.698,
+      "table": {
+        "hand no / machine no": 15,
+        "hand yes / machine yes": 15,
+        "hand no / machine yes": 11,
+        "hand yes / machine no": 2
+      }
+    },
+    "claude-haiku-5-5": {
+      "n": 43,
+      "kappa": 0.358,
+      "kappa_exact": "24/67",
+      "kappa_full": 0.3582089552238806,
+      "ac1": 0.352,
+      "agreement": 0.674,
+      "table": {
+        "hand no / machine no": 16,
+        "hand yes / machine no": 4,
+        "hand yes / machine yes": 13,
+        "hand no / machine yes": 10
+      }
+    }
+  },
+  "precision_fused": {
+    "n": 20,
+    "confirmed": 12,
+    "share": 0.6,
+    "wilson95": [
+      0.387,
+      0.781
+    ]
+  },
+  "S2_split": {
+    "n": 9,
+    "hand_yes": 4,
+    "sides_with": {
+      "gpt-6-luna": 5,
+      "claude-haiku-5-5": 4
+    }
+  },
+  "S3_misses": {
+    "n": 14,
+    "hand_yes": 1
+  },
+  "gate": {
+    "n": 43,
+    "min_n": 40,
+    "min_kappa": 0.6,
+    "kappa": 0.386,
+    "ac1": 0.407,
+    "words_claims_on_hold": true,
+    "why": "kappa 352/911 = 0.3864 < 0.6 (exact)",
+    "rule": ">= 40 answered quick-check items and kappa >= 0.6 (Jan's yes / no vs the fused message call, both judges, H1's rule), else the H1 words claims are put on hold, reported openly; AC1 reported (PREREG B6, quick check)",
+    "registered": true
+  },
+  "skips_per_stratum": {
+    "S3": 1,
+    "S1": 5,
+    "S2": 1
+  },
+  "kappa_worst_case_skips": {
+    "n": 50,
+    "kappa": 0.2,
+    "kappa_exact": "1/5"
+  },
+  "answered": 43,
+  "unmatched": [],
+  "calls_changed_since_draw": [],
+  "fingerprint": "30c01348322c773e"
+}
