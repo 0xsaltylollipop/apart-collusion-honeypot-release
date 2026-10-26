@@ -54,7 +54,7 @@ The recorded human-check κ values are in `docs/hand-labels/gate-*.txt` and `res
 
 **Data.** This repository holds the code, the analysis plan, the hand labels, the label-file hash lists and the analysis outputs. Run logs, prompts, messages and judge labels for every analysed run are available from the author on request. Pilot and pre-sprint grid data are exploratory and not released.
 
-**Integrity.** This release has a fresh history. `docs/integrity-log.md` lists every commit and tag the paper cites from the development repository, with commit and GitHub push times; the full history is available on request. For this release, the author's name was replaced by "the author" in code comments, docs and `PREREG.md` (no other text changed), and the quick-check label file was renamed to `docs/hand-labels/author-quick-labels.md` (same content and sha256 as recorded in `results/RESULTS.json`).
+**Integrity.** This release has a fresh history. `docs/integrity-log.md` lists every commit and tag the paper cites from the development repository, with commit and GitHub push times; the full history is available on request. For this release, the author's name was replaced by "the author" in code comments, docs and `PREREG.md` (no other text changed). Files whose checksums are recorded (the hand-label sheet, the gate reports and `results/RESULTS.json`) were left byte-identical, so they still contain the author's first name; the quick-check label file was renamed to `docs/hand-labels/author-quick-labels.md` (same content and sha256 as recorded in `results/RESULTS.json`).
 
 ## Prior work and what is new
 

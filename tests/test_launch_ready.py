@@ -175,6 +175,11 @@ def test_runner_passes_every_frozen_key(tmp_path, monkeypatch):
 
 # ---------------------------------------------------------------- 2. the frozen launch config
 
+# The two launch-config tests read the private run data (runs/, available on request); skip them without it.
+needs_runs = pytest.mark.skipif(not (ROOT / "runs").exists() and not (ROOT.parent / "runs").exists(),
+                                reason="needs the run data in runs/ (available from the author on request)")
+
+@needs_runs
 def test_launch_config_matches_prereg_section_a_and_self_play():
     lm = _module("launch_main", ROOT / "scripts" / "launch_main.py")
     cfg = lm.load()
@@ -206,6 +211,7 @@ def test_launch_config_matches_prereg_section_a_and_self_play():
             assert sp == cfg["api_sampling"], m["name"]
 
 
+@needs_runs
 def test_launcher_refuses_a_missing_key_and_sonnet_before_haiku(tmp_path):
     lm = _module("launch_main", ROOT / "scripts" / "launch_main.py")
     cfg = json.loads(lm.CONFIG.read_text())
