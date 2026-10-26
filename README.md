@@ -1,76 +1,55 @@
-# Does a collusion honeypot predict collusion? Nine LLMs in simulated pricing markets
+# Honey, I Shrunk the Eval: A Short Collusion Trap Predicts Which LLMs Collude in the Long Run
 
-Code, labels and results for our project in the [Apart Research AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25) (23–25 October 2026), Track 3.2.
+Code, labels and results for a project in the [Apart Research AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25) (Track 3.2). Paper: see the Apart sprint submission. All markets are simulated.
 
-**What we test.** Developers and evaluators use honeypots, tests built to tempt a model into misbehaving, as one line of safety evidence. We ask whether behaviour in a collusion honeypot predicts behaviour in a longer setting with no planted offer. Nine language models play a simulated three-firm pricing market with chat. In the **honeypot**, two copies of a model compete with firm C, which we script. After ten ordinary rounds, C raises its price in four of five versions of the game, and in the offer version it invites the others to match it. In **self-play**, our stand-in for deployment, three copies of the model play six 300-round games. We compare the two rankings of the models. The headline uses explicit price-fixing agreements, judged by Claude Opus 5.5 (checked against human labels, κ = 0.68). The secondary test uses prices. The analysis plan was fixed before unblinding (`PREREG.md`), and every later change is logged there.
+**The question.** AI developers use honeypots, tests that tempt a model to misbehave, as safety evidence. Does a model's behaviour in a short collusion honeypot predict its behaviour in long games? In the honeypot, a scripted rival (firm C) offers two copies of a model to fix prices; in long games (self-play), three copies compete for 300 rounds. Nine LLMs, ranked by how often and how early they agree to fix prices.
 
-**Result.** Models that agree to fix prices more often in the honeypot's offer games also do so more often in self-play (Spearman ρ = 0.93, 95% interval [0.58, 1.00], one-sided p < 0.001, n = 9). Honeypot profit gains in the opening rounds track self-play profits (ρ = 0.72, descriptive); the planned offer-minus-no-offer price measure does not (ρ = −0.23, exploratory after its planted-colluder check failed). Full output: `results/RESULTS.md`. Figure 2: `results/figure2.pdf`.
+## Results
 
-All markets are simulated.
+- **The short test predicts the long games:** Spearman ρ = 0.93 (95% interval 0.58–1.00, one-sided p < 0.001, n = 9; agreements judged by Claude Opus 5.5, checked against human labels).
+- **The offer matters:** it ranks models more closely than the chat before the offer (ρ = 0.62), because it draws out models that rarely speak unprompted (exploratory; nine models cannot yet confirm the gap).
+- **Prices are mixed:** opening-round profit gains track self-play profits (ρ = 0.72, descriptive); the planned offer-minus-no-offer price measure does not (ρ = −0.23, exploratory after its planted-colluder check failed).
+
+Full output: [`results/RESULTS.md`](results/RESULTS.md) · Figure 2: [`results/figure2.pdf`](results/figure2.pdf)
+
+## Quick start
+
+```bash
+uv sync --group figures        # Python 3.12
+.venv/bin/python -m pytest -q tests/test_verdicts.py tests/test_majority.py tests/test_judge.py tests/test_quickcheck.py
+```
+
+The full suite (`pytest -q`) takes about an hour, mostly `tests/test_unblind_all.py`; two launch-config tests skip without the run data.
 
 ## Repository map
 
 | Path | What it is |
 |---|---|
-| `collusion/market/` | demand, profits, competitive (1.47) and cartel (2.85) prices, best responses |
-| `collusion/game/` | the round loop, prompts, LLM and scripted firms, firm C's messages, save / copy of games |
-| `collusion/experiments/` | self-play runs, honeypot runs (save point → five versions: none, silent, hint, offer, benign), robot known-answer runs |
-| `collusion/clients/` | OpenAI, Anthropic and vLLM clients |
-| `collusion/analysis/` | price scoring, the selfish best-response baseline, words judges and majority vote, the human quick check, cross-model statistics |
-| `scripts/unblind_all.py` | the one-command analysis: checks label hashes, computes H1–H4, recomputes the key statistics independently, writes `results/` |
-| `scripts/opus_cc*.py`, `scripts/opus_cc_workflow*.js` | how the Claude Opus 5.5 words labels were produced (Claude Code subagents) |
-| `scripts/launch_main.py`, `scripts/pod/`, `scripts/sprint/` | how the runs were launched (API models; open-weight models on GPU pods) |
-| `scripts/regress.py`, `scripts/robot_controls.py`, `scripts/validate_*.py`, `scripts/verify_selfish_baseline.py` | regression and validation checks |
-| `configs/` | the frozen run settings and the model ↔ run pairing (`pairs.json`) |
-| `docs/hand-labels/` | the author's 43 quick-check labels, judge gate results, judge agreement, and the label-file hash lists |
-| `docs/prompts.md`, `docs/judging.md`, `docs/opus-judge.md`, `docs/analysis-methods.md`, `docs/parameters.md` | method documentation |
+| `collusion/` | market, game loop and prompts, honeypot and self-play runners, model clients, analysis (scoring, judges, statistics) |
+| `scripts/unblind_all.py` | the one-command analysis: checks label hashes, computes the tests, recomputes key statistics independently, writes `results/` |
+| `scripts/` (other) | how runs were launched and judged (`launch_main.py`, `opus_cc*`), regression and validation checks |
+| `configs/` | frozen run settings and the model ↔ run pairing |
+| `docs/hand-labels/` | the author's human-check labels, judge gate results, label-file hash lists |
+| `docs/` (other) | method notes: [prompts](docs/prompts.md), [judging](docs/judging.md), [Opus judge](docs/opus-judge.md), [analysis](docs/analysis-methods.md) |
 | `PREREG.md` | the analysis plan and its log of changes |
-| `results/` | the unblinded output (`RESULTS.md`, `RESULTS.json`, Figure 2) |
+| `results/` | the unblinded output |
 | `tests/` | offline tests, including planted-truth tests of the analysis |
 
-## Reproduce
+## Reproduce the analysis
 
-```bash
-uv sync --group figures                   # Python 3.12; the figures group draws Figure 2
-.venv/bin/python -m pytest -q             # offline tests (the full suite takes about an hour; tests/test_unblind_all.py alone is the slow part)
-```
+The run data (several GB of logs, messages, prices and judge labels) are available from the author on request. Place them in `runs/` at the repository root and run `.venv/bin/python scripts/unblind_all.py --unblind --out results`. The human-check answer key is withheld so the check stays reusable; without it, the script uses the recorded κ values, and every headline number is unaffected. New runs need API keys (`.env.example`) and, for open-weight models, GPU pods; see `python -m collusion --help`.
 
-**Re-running the analysis.** The run data (several GB of logs, prompts, messages, prices and judge labels) are available from the author on request. Place them in `runs/` at the repository root (`configs/pairs.json` points to `../runs/...`). Then:
+## Data, integrity and prior work
 
-```bash
-.venv/bin/python scripts/unblind_all.py --unblind --out results
-```
-
-The recorded human-check κ values are in `docs/hand-labels/gate-*.txt` and `results/RESULTS.md`. Recomputing them needs the quick-check answer key, which maps the blinded sheet back to the messages; it is withheld so the check stays reusable. Without `--quick-key`, the script uses the κ values recorded in its code for the Opus judge sets and shows the other gate rows as unknown; every H1/H2 number is unaffected.
-
-**Producing new runs** needs API keys (copy `.env.example` to `.env`) and, for open-weight models, GPU pods:
-
-```bash
-.venv/bin/python -m collusion robots --out runs/robots                       # known-answer test, no LLM calls
-.venv/bin/python -m collusion selfplay --model gpt-6-luna --out runs/sp-luna --games 6 --periods 300 --firms 3 --chat
-.venv/bin/python scripts/launch_main.py --help                                 # the main honeypot runs, from configs/main-honeypot.json
-.venv/bin/python scripts/print_game.py runs/sp-luna/sp-s1                      # read a game round by round
-```
-
-**Data.** This repository holds the code, the analysis plan, the hand labels, the label-file hash lists and the analysis outputs. Run logs, prompts, messages and judge labels for every analysed run are available from the author on request. Pilot and pre-sprint grid data are exploratory and not released.
-
-**Integrity.** This release has a fresh history. `docs/integrity-log.md` lists every commit and tag the paper cites from the development repository, with commit and GitHub push times; the full history is available on request. For this release, the author's name was replaced by "the author" in code comments, docs and `PREREG.md` (no other text changed). Files whose checksums are recorded (the hand-label sheet, the gate reports and `results/RESULTS.json`) were left byte-identical, so they still contain the author's first name; the quick-check label file was renamed to `docs/hand-labels/author-quick-labels.md` (same content and sha256 as recorded in `results/RESULTS.json`).
-
-## Prior work and what is new
-
-- **Before the sprint:** we built the simulation harness in a private repository, ran pilots, and ran an exploratory self-play grid on 21 Oct 2026. On 22 Oct the code moved into this layout without changing its behaviour: `scripts/regress.py` gave identical outputs on 1,391 files from fake-model, robot and replayed real games. On 22 Oct we also froze the nine-model lineup and the self-play setup.
-- **During the sprint (23–25 Oct):**
-  - the honeypot design changes;
-  - every run analysed in the paper (self-play launched just after midnight on Friday 23 Oct, Berlin time; the organisers confirmed participants could start as soon as it was Friday locally);
-  - the judges, the hand labels, the analysis plan, the analysis and the paper.
-- **Disclosure:** the pre-sprint grid and pilots shaped the design but never enter the analysis.
+- **Released here:** code, analysis plan, hand labels, label-file hash lists and analysis outputs. Run logs are on request; pilot and pre-sprint data are exploratory and not released.
+- **Integrity:** this release has a fresh history. [`docs/integrity-log.md`](docs/integrity-log.md) lists the development-repository commits and tags the paper cites, with push times. The author's name was replaced by "the author", except in checksum-pinned files (hand-label sheet, gate reports, `results/RESULTS.json`), which are byte-identical and still contain the first name. Local paths in `results/` were made relative; no values changed.
+- **Before the sprint:** the simulation harness, pilots and an exploratory self-play grid (21 Oct 2026). On 22 Oct the code moved into this layout without changing its behaviour (`scripts/regress.py`: identical outputs on 1,391 files), and the nine-model lineup and self-play setup were frozen.
+- **During the sprint (23–25 Oct):** the honeypot design changes; every analysed run (self-play launched just after midnight on Friday 23 Oct, Berlin time, as the organisers allowed); the judges, hand labels, analysis plan, analysis and paper. The pre-sprint grid and pilots shaped the design but never enter the analysis.
 
 ## LLM usage
 
-Claude Opus 5.5 (Anthropic), in Claude Code, wrote most of the code and drafted the paper text under the author's direction. The author made the research decisions and checked every claim and result. A separate Claude agent and OpenAI's Codex reviewed code and design changes. Claude Opus 5.5 is also the words judge; GPT-6 Luna and Claude Haiku 5.5 were the planned judges.
+The author chose the question, made the research decisions, hand-labelled the human check and checked every claim and result. Claude Opus 5.5 (Anthropic), in Claude Code, wrote most of the code and drafted the paper text under the author's direction; it is also the words judge.
 
-## Notes
+## Licence
 
-- Absolute local paths in `results/` were replaced by repository-relative paths for this release; no values changed.
-- Attribution (`ATTRIBUTION.md`): the market code adapts MIT-licensed code by Peist, Romero and Sauer; the P0 prompt text and one price-parsing rule are reproduced verbatim from LLMCartel (Riemer et al., ICML 2026; their repository has no licence) for comparability, in `collusion/game/prompts.py` (`P0_SYSTEM`, `parse_price_lcartel_gpt`).
-- Licence: MIT (code); third-party portions listed in `ATTRIBUTION.md` remain under their original terms.
+MIT for the code. Third-party parts, including market code adapted from Peist, Romero and Sauer and prompt text reproduced from LLMCartel (Riemer et al., 2026), keep their original terms; see [`ATTRIBUTION.md`](ATTRIBUTION.md).
